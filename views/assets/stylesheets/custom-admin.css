@@ -1,0 +1,66 @@
+.logo-highlight {
+  color: yellow;
+}
+
+.message {
+  margin: 0;
+}
+
+.content-header .title {
+  font-size: 24px;
+}
+
+.vresize {
+  resize: vertical;
+}
+
+.product-image {
+  height: 150px;
+  margin-bottom: 15px;
+  position: relative;
+}
+
+.product-image .delete-image {
+  width: 22px;
+  height: 22px;
+  padding: 2px 0 0 5px;
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  font-size: 16px;
+  background: #F00;
+  color: #FFF;
+  border-radius: 50%;
+}
+
+.delete-image .fa {
+  pointer-events: none;
+}
+
+.product-image img {
+  max-height: 100%;
+  max-width: 100%;
+}
+
+.form-errors {
+  color: red;
+}
+
+.cart-item-image img {
+  max-height: 40px;
+  min-width: 75px;
+  object-fit: cover;
+  float: left;
+}
+
+.info-box-icon {
+  padding: 20px 0;
+}
+
+.chart .box-body {
+  padding: 0;
+}
+
+.highcharts-container {
+  width: 100% !important;
+}
