@@ -29,17 +29,17 @@ class Rating
   static function insert($item)
   {
     $db = DB::getInstance();
-    $query = $db->prepare("INSERT INTO ratings(user_id, product_id, score) VALUE (:user_id, :product_id, :score)");
+    $query = $db->prepare("CALL sp_insert_rating(:user_id, :product_id, :score)");
     $rs = $query->execute(array('user_id' => $item->user_id, 'product_id' => $item->product_id, 'score' => $item->score));
-    if ($rs) return $db->lastInsertId();
+    if ($rs) return $query->fetch()[0];
     return $rs;
   }
 
   static function update($item)
   {
     $db = DB::getInstance();
-    $query = $db->prepare("UPDATE ratings SET user_id=:user_id, product_id=:product_id, score=:score WHERE id=:id");
-    $rs = $query->execute(array('user_id' => $item->user_id, 'product_id' => $item->product_id, 'score' => $item->score, 'id' => $item->id));
+    $query = $db->prepare("CALL sp_update_rating(:id, :score)");
+    $rs = $query->execute(array('score' => $item->score, 'id' => $item->id));
     return $rs;
   }
 }

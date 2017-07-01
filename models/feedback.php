@@ -48,7 +48,7 @@ class Feedback
   static function insert($item)
   {
     $db = DB::getInstance();
-    $query = $db->prepare("INSERT INTO feedbacks(user_id, content) VALUE (:user_id, :content)");
+    $query = $db->prepare("CALL sp_insert_feedback(:user_id, :content)");
     $rs = $query->execute(array('user_id' => $item->user_id, 'content' => $item->content));
     return $rs;
   }
@@ -56,7 +56,7 @@ class Feedback
   static function update($item)
   {
     $db = DB::getInstance();
-    $query = $db->prepare("UPDATE feedbacks SET status=:status WHERE id=:id");
+    $query = $db->prepare("CALL sp_update_feedback(:id, :status)");
     $rs = $query->execute(array('status' => $item->status, 'id' => $item->id));
     return $rs;
   }

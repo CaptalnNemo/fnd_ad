@@ -42,7 +42,7 @@ class Category
   static function insert($item)
   {
     $db = DB::getInstance();
-    $query = $db->prepare("INSERT INTO categories(name, parent_id) VALUE (:name,:parent_id)");
+    $query = $db->prepare("CALL sp_insert_category(:name,:parent_id)");
     $rs = $query->execute(array('name' => $item->name, 'parent_id' => $item->parent_id));
     return $rs;
   }
@@ -50,7 +50,7 @@ class Category
   static function update($item)
   {
     $db = DB::getInstance();
-    $query = $db->prepare("UPDATE categories SET name=:name, parent_id=:parent_id WHERE id=:id");
+    $query = $db->prepare("CALL sp_update_category(:id, :name, :parent_id)");
     $rs = $query->execute(array('name' => $item->name, 'parent_id' => $item->parent_id, 'id' => $item->id));
     return $rs;
   }
@@ -58,13 +58,8 @@ class Category
   static function destroy($item)
   {
     $db = DB::getInstance();
-    $query = $db->prepare("DELETE FROM categories WHERE id=:id");
+    $query = $db->prepare("CALL sp_delete_category(:id)");
     $rs = $query->execute(array('id' => $item->id));
-    if ($rs) {
-      foreach ($item->children() as $child) {
-        Category::destroy($child);
-      }
-    }
     return $rs;
   }
 

@@ -33,16 +33,16 @@ class Comment
   static function insert($item)
   {
     $db = DB::getInstance();
-    $query = $db->prepare("INSERT INTO comments(user_id, product_id, content) VALUE (:user_id, :product_id, :content)");
+    $query = $db->prepare("CALL sp_insert_comment(:user_id, :product_id, :content)");
     $rs = $query->execute(array('user_id' => $item->user_id, 'product_id' => $item->product_id, 'content' => $item->content));
-    if ($rs) return $db->lastInsertId();
+    if ($rs) return $query->fetch()[0];
     return $rs;
   }
 
   static function destroy($item)
   {
     $db = DB::getInstance();
-    $query = $db->prepare("DELETE FROM comments WHERE id=:id");
+    $query = $db->prepare("CALL sp_delete_comment(:id)");
     $rs = $query->execute(array('id' => $item->id));
     return $rs;
   }
