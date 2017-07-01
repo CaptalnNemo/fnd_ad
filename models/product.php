@@ -60,17 +60,16 @@ class Product
   static function insert($item)
   {
     $db = DB::getInstance();
-    $query = $db->prepare("INSERT INTO products(name, price, description, category_id, status)
-      VALUE (:name, :price, :description, :category_id, :status)");
-    $rs = $query->execute(array('name' => $item->name, 'price' => $item->price, 'description' => $item->description, 'category_id' => $item->category_id, 'status' => $item->status));
-    if ($rs) return $db->lastInsertId();
+    $query = $db->prepare("CALL sp_insert_product(:category_id, :name, :price, :description, :status)");
+    $rs = $query->execute(array('category_id' => $item->category_id, 'name' => $item->name, 'price' => $item->price, 'description' => $item->description, 'status' => $item->status));
+    if ($rs) return $query->fetch()[0];
     return $rs;
   }
 
   static function update($item)
   {
     $db = DB::getInstance();
-    $query = $db->prepare("UPDATE products SET name=:name, price=:price, description=:description, category_id=:category_id, status=:status WHERE id=:id");
+    $query = $db->prepare("CALL sp_update_product(:id, :category_id, :name, :price, :description, :status)");
     $rs = $query->execute(array('name' => $item->name, 'price' => $item->price, 'description' => $item->description, 'category_id' => $item->category_id, 'status' => $item->status, 'id' => $item->id));
     return $rs;
   }
@@ -78,7 +77,7 @@ class Product
   static function destroy($item)
   {
     $db = DB::getInstance();
-    $query = $db->prepare("DELETE FROM products WHERE ID=:id");
+    $query = $db->prepare("CALL sp_delete_product(:id)");
     $rs = $query->execute(array('id' => $item->id));
     if ($rs) {
       remove_dir('uploads/products/' . $item->id);

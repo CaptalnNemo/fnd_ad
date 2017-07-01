@@ -57,17 +57,16 @@ class Order
   static function insert($item)
   {
     $db = DB::getInstance();
-    $query = $db->prepare("INSERT INTO orders(user_id, receiver_name, receiver_address, receiver_phone, note, amount, status)
-      VALUE (:user_id, :receiver_name, :receiver_address, :receiver_phone, :note, :amount, :status)");
-    $rs = $query->execute(array('user_id' => $item->user_id, 'receiver_name' => $item->receiver_name, 'receiver_address' => $item->receiver_address, 'receiver_phone' => $item->receiver_phone, 'note' => $item->note, 'amount' => $item->amount, 'status' => $item->status));
-    if ($rs) return $db->lastInsertId();
+    $query = $db->prepare("CALL sp_insert_order(:user_id, :receiver_name, :receiver_address, :receiver_phone, :note, :amount)");
+    $rs = $query->execute(array('user_id' => $item->user_id, 'receiver_name' => $item->receiver_name, 'receiver_address' => $item->receiver_address, 'receiver_phone' => $item->receiver_phone, 'note' => $item->note, 'amount' => $item->amount));
+    if ($rs) return $query->fetch()[0];
     return $rs;
   }
 
   static function update($item)
   {
     $db = DB::getInstance();
-    $query = $db->prepare("UPDATE orders SET status=:status WHERE id=:id");
+    $query = $db->prepare("CALL sp_update_order(:id, :status)");
     $rs = $query->execute(array('status' => $item->status, 'id' => $item->id));
     return $rs;
   }
@@ -89,7 +88,7 @@ class Order
   static function totalAmount()
   {
     $db = DB::getInstance();
-    $query = $db->query("SELECT SUM(amount) AS total_amount FROM orders WHERE status=1");
+    $query = $db->query('SELECT SUM(amount) AS total_amount FROM orders WHERE status=1');
     $rs = $query->fetch();
     return $rs['total_amount'];
   }
@@ -100,10 +99,8 @@ class Order
 
     $list = [];
     $db = DB::getInstance();
-    $req = $db->prepare('SELECT COUNT(*) AS num_of_orders, SUM(amount) AS total_amount, DAY(created_at) AS day
-      FROM orders WHERE status=1 AND created_at BETWEEN :first_day AND LAST_DAY(:first_day) GROUP BY DAY(created_at)');
+    $req = $db->prepare('CALL statistic(:first_day)');
     $req->execute(array('first_day' => $first_day));
-
     foreach ($req->fetchAll() as $item) {
       $list[$item['day']]['num_of_orders'] = $item['num_of_orders'];
       $list[$item['day']]['total_amount'] = $item['total_amount'];

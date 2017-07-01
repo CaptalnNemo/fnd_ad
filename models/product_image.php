@@ -29,7 +29,7 @@ class ProductImage
   static function insert($item)
   {
     $db = DB::getInstance();
-    $query = $db->prepare("INSERT INTO product_images(product_id, image) VALUE (:product_id, :image)");
+    $query = $db->prepare("CALL sp_insert_product_image(:product_id, :image)");
     $rs = $query->execute(array('product_id' => $item->product_id, 'image' => $item->image));
     return $rs;
   }
@@ -37,7 +37,7 @@ class ProductImage
   static function destroy($item)
   {
     $db = DB::getInstance();
-    $query = $db->prepare("DELETE FROM product_images WHERE ID=:id");
+    $query = $db->prepare("CALL sp_delete_product_image(:id)");
     $rs = $query->execute(array('id' => $item->id));
     if ($rs && is_file($item->image)) {
       unlink($item->image);

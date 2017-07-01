@@ -36,8 +36,8 @@ class OrderDetail
   static function insert($item)
   {
     $db = DB::getInstance();
-    $query = $db->prepare("INSERT INTO order_details(order_id, product_id, quantity, price) VALUE (:order_id, :product_id, :quantity, :price)");
-    $rs = $query->execute(array('order_id' => $item->order_id, 'product_id' => $item->product_id, 'quantity' => $item->quantity, 'price' => $item->price));
+    $query = $db->prepare("CALL sp_insert_order_detail(:order_id, :product_id, :price, :quantity)");
+    $rs = $query->execute(array('order_id' => $item->order_id, 'product_id' => $item->product_id, 'price' => $item->price, 'quantity' => $item->quantity));
     return $rs;
   }
 }

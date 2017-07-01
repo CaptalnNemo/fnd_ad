@@ -75,29 +75,17 @@ class User
   static function insert($item)
   {
     $db = DB::getInstance();
-    $query = $db->prepare("INSERT INTO users(email, password, name, phone, activated, is_admin)
-        VALUES(:email, :password, :name, :phone, :activated, :is_admin)");
-    $rs = $query->execute(array('email' => $item->email, 'password' => $item->password, 'name' => $item->name, 'phone' => $item->phone, 'activated' => $item->activated, 'is_admin' => $item->is_admin));
-    if ($rs) {
-      return $db->lastInsertId();
-    }
+    $query = $db->prepare("CALL sp_insert_user(:email, :name, :phone, :password)");
+    $rs = $query->execute(array('email' => $item->email, 'name' => $item->name, 'phone' => $item->phone, 'password' => $item->password));
+    if ($rs) return $query->fetch()[0];
     return $rs;
   }
 
   static function update($item)
   {
     $db = DB::getInstance();
-    $query = $db->prepare("UPDATE users SET email=:email, password=:password, name=:name, phone=:phone, activated=:activated, is_admin=:is_admin
-        WHERE id=:id");
+    $query = $db->prepare("CALL sp_update_user(:id, :email, :name, :phone, :password, :is_admin, :activated)");
     $rs = $query->execute(array('email' => $item->email, 'password' => $item->password, 'name' => $item->name, 'phone' => $item->phone, 'activated' => $item->activated, 'is_admin' => $item->is_admin, 'id' => $item->id));
-    return $rs;
-  }
-
-  static function destroy($item)
-  {
-    $db = DB::getInstance();
-    $query = $db->prepare("DELETE FROM users WHERE id=:id");
-    $rs = $query->execute(array('id' => $item->id));
     return $rs;
   }
 
